@@ -2,7 +2,6 @@ package com.testtask.demo.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +24,6 @@ public class Account {
     private String accountNumber;
     private Double balance;
     private String accountType;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private User user;
 }
