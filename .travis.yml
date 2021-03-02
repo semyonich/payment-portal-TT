@@ -10,4 +10,3 @@ cache:
     - $HOME/.m2
 before_install:
   - chmod +x mvnw
-  -  - mysql -e 'CREATE DATABASE IF NOT EXISTS payment-portal;'
