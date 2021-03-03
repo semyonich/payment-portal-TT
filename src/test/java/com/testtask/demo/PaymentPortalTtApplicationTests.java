@@ -39,12 +39,6 @@ class PaymentPortalTtApplicationTests {
     @Autowired
     private PaymentMapper paymentMapper;
 
-
-    @BeforeAll
-    static void beforeAll() {
-
-    }
-
     @Test
     public void contextLoads() {
     }
