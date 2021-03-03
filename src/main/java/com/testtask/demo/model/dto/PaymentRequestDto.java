@@ -2,9 +2,13 @@ package com.testtask.demo.model.dto;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class PaymentRequestDto {
     @NotNull(message = "sourceAccId must be greater than 0")
     @Min(value = 1, message = "sourceAccId must be greater than 0")

@@ -5,7 +5,6 @@ import com.testtask.demo.model.Payment;
 import com.testtask.demo.model.dto.CreatedPaymentResponseDto;
 import com.testtask.demo.model.dto.CustomQueryResponseDto;
 import com.testtask.demo.model.dto.PaymentRequestDto;
-import com.testtask.demo.service.AccountService;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,11 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class PaymentMapper {
-    private final AccountService accountService;
 
-    public Payment makeEntity(PaymentRequestDto requestDto) {
-        Account sourceAccount = accountService.getById(requestDto.getSourceAccId());
-        Account destinationAccount = accountService.getById(requestDto.getDestAccId());
+    public Payment makeEntity(PaymentRequestDto requestDto,
+                              Account sourceAccount, Account destinationAccount) {
         return Payment.builder().sourceAccount(sourceAccount)
                 .destinationAccount(destinationAccount).amount(requestDto.getAmount())
                 .paymentDate(LocalDateTime.now()).description(requestDto.getReason()).build();

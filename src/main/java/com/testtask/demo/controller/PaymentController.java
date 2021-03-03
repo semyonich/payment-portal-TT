@@ -6,8 +6,10 @@ import com.testtask.demo.model.User;
 import com.testtask.demo.model.dto.CreatedPaymentResponseDto;
 import com.testtask.demo.model.dto.CustomQueryResponseDto;
 import com.testtask.demo.model.dto.PaymentRequestDto;
+import com.testtask.demo.service.AccountService;
 import com.testtask.demo.service.PaymentService;
 import com.testtask.demo.service.mapper.PaymentMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -28,11 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final PaymentMapper mapper;
     private final PaymentService paymentService;
+    private final AccountService accountService;
 
     @PostMapping
     public ResponseEntity<CreatedPaymentResponseDto>
             createPayment(@Valid @RequestBody PaymentRequestDto requestDto) {
-        Payment payment = mapper.makeEntity(requestDto);
+        Account sourceAccount = accountService.getById(requestDto.getSourceAccId());
+        Account destinationAccount = accountService.getById(requestDto.getDestAccId());
+        Payment payment = mapper.makeEntity(requestDto, sourceAccount, destinationAccount);
         paymentService.create(payment);
         CreatedPaymentResponseDto responseDto = mapper.makeCreatedDto(payment);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
@@ -41,12 +46,17 @@ public class PaymentController {
     @PostMapping("/multiple")
     public ResponseEntity<List<CreatedPaymentResponseDto>>
             createPayments(@Valid @RequestBody List<PaymentRequestDto> requestDtos) {
-        List<CreatedPaymentResponseDto> payments = requestDtos.stream()
-                .map(mapper::makeEntity)
-                .map(paymentService::create)
+        List<Payment> payments = new ArrayList<>();
+        for (PaymentRequestDto dto : requestDtos) {
+            Account sourceAccount = accountService.getById(dto.getSourceAccId());
+            Account destinationAccount = accountService.getById(dto.getDestAccId());
+            Payment payment = mapper.makeEntity(dto, sourceAccount, destinationAccount);
+            payments.add(paymentService.create(payment));
+        }
+        List<CreatedPaymentResponseDto> outputPayments = payments.stream()
                 .map(mapper::makeCreatedDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(payments, HttpStatus.OK);
+        return new ResponseEntity<>(outputPayments, HttpStatus.OK);
     }
 
     @GetMapping
